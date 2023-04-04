@@ -5,10 +5,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager.widget.PagerAdapter
-import com.example.korefugee.APIS
-import com.example.korefugee.R
-import com.example.korefugee.WordList_R_Model
+import com.example.korefugee.*
 import com.google.mlkit.common.model.DownloadConditions
 import com.google.mlkit.nl.translate.TranslateLanguage
 import com.google.mlkit.nl.translate.TranslateLanguage.*
@@ -36,20 +36,17 @@ class ViewPagerAdapter2(accesstoken:String, date:Int, level:String,
     var t_category:String = category
     var t_language:String = language
 
-    var id:String = language
+    var id:Int = 1
 
 
     fun ViewPagerAdapter(context: Context){
         mContext=context
-        Log.d("응답","bbbbbbbbbbbb")
     }
-
     //position에 해당하는 페이지 생성
     @OptIn(ExperimentalTime::class)
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         // page.xml 과 연결
         Log.d("응답",t_language)
-
         val options = TranslatorOptions.Builder()
             .setSourceLanguage(KOREAN)
             .setTargetLanguage(ENGLISH)
@@ -81,10 +78,11 @@ class ViewPagerAdapter2(accesstoken:String, date:Int, level:String,
                     if (responsedata != null) {
                         val vocalist: List<WordList_R_Model.Data> = responsedata.data
                         if (responsedata.success == "success") {
-                            Log.e("z", vocalist.size.toString())
+
                             view.Koreantext.text = vocalist[position].words
                             view.Korean_read.setText(vocalist[position].wordP)
-                            id = vocalist[position].wordId.toString()
+
+
                             val mtValue = measureTimedValue {
                                 koreanTranslator.downloadModelIfNeeded(conditions)
                                     .addOnSuccessListener {
@@ -100,6 +98,54 @@ class ViewPagerAdapter2(accesstoken:String, date:Int, level:String,
                                     .addOnFailureListener { exception ->
                                         Log.e("ssssssss2", exception.toString())
                                     }
+                            }
+
+
+                            view.star.setOnClickListener {
+                                id = vocalist[position].wordId
+                                view.star?.isSelected = (view.star?.isSelected != true)
+                                val data = MyWord_Save_Model(id)
+                                if(view.star?.isSelected == true){
+                                    // 추가
+                                    if(vocalist[position].check != true){
+                                        api.post_myword("Bearer $t_accesstoken",data).enqueue(object : Callback<Word_Saved_check_R_Model> {
+                                            // 응답하면
+                                            override fun onResponse(call: Call<Word_Saved_check_R_Model>, response: Response<Word_Saved_check_R_Model>) {
+                                                Log.e("응답",response.toString())
+                                                Log.e("응답", response.body().toString())
+                                                Log.e("응답",response.errorBody()?.string().toString())
+                                                vocalist[position].check = true
+                                                Log.e("응답",vocalist[position].check.toString())
+                                            }
+                                            override fun onFailure(call: Call<Word_Saved_check_R_Model>, t: Throwable) {
+                                                // 실패 시
+                                                Log.d("응답",t.message.toString())
+                                            }
+                                        })
+                                    }
+                                }
+                                else{
+                                    // 삭제
+                                    if(vocalist[position].check == true){
+                                        com.example.korefugee.Voca.api.delete_myword("Bearer $t_accesstoken",data.wordId).enqueue(object :
+                                            Callback<Word_Deleted_R_Model> {
+                                            // 응답하면
+                                            override fun onResponse(call: Call<Word_Deleted_R_Model>, response: Response<Word_Deleted_R_Model>) {
+                                                Log.e("응답",response.toString())
+                                                Log.e("응답", response.body().toString())
+                                                Log.e("응답",response.errorBody()?.string().toString())
+                                                vocalist[position].check = false
+                                                Log.e("응답",vocalist[position].check.toString())
+
+                                            }
+                                            override fun onFailure(call: Call<Word_Deleted_R_Model>, t: Throwable) {
+                                                // 실패 시
+                                                Log.e("응답",t.message.toString())
+                                            }
+                                        })
+                                    }
+                                }
+
                             }
                         }
 
@@ -136,6 +182,7 @@ class ViewPagerAdapter2(accesstoken:String, date:Int, level:String,
 
     override fun setPrimaryItem(container: ViewGroup, position: Int, `object`: Any) {
         super.setPrimaryItem(container, position, `object`)
+
     }
 
     override fun getItemPosition(`object`: Any): Int {

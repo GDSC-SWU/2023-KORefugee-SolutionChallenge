@@ -70,7 +70,6 @@ class VocaMainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if(category != "today"){
             date = "0"
         }
-        Log.e("aa", date+level+category+language)
 
         //어댑터 연결하기
         var adapter= ViewPagerAdapter2(accesstoken,date.toInt(), level, category, language)

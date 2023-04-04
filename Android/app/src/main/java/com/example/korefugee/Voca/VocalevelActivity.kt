@@ -12,6 +12,9 @@ class VocalevelActivity : AppCompatActivity() {
     lateinit var category : String
     lateinit var language : String
 
+    lateinit var accesstoken:String
+    lateinit var refreshtoken:String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // 바인딩 기본 작업
@@ -19,9 +22,12 @@ class VocalevelActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // intent로 category 받아오기
-        if (intent.hasExtra("category")&&intent.hasExtra("language")){
+        if (intent.hasExtra("category")&&intent.hasExtra("language")
+            &&intent.hasExtra("accesstoken")&&intent.hasExtra("refreshtoken")){
             category = intent.getStringExtra("category").toString()
             language = intent.getStringExtra("language").toString()
+            accesstoken = intent.getStringExtra("accesstoken").toString()
+            refreshtoken = intent.getStringExtra("refreshtoken").toString()
 
         }
 
@@ -37,6 +43,8 @@ class VocalevelActivity : AppCompatActivity() {
                     intent.putExtra("category", category)
                     intent.putExtra("level", "Biginner")
                     intent.putExtra("language", language)
+                    intent.putExtra("accesstoken", accesstoken)
+                    intent.putExtra("refreshtoken", refreshtoken)
                     startActivity(intent)
                     finish()
                 }
@@ -47,6 +55,8 @@ class VocalevelActivity : AppCompatActivity() {
                     intent.putExtra("category", category)
                     intent.putExtra("level", "Advanced")
                     intent.putExtra("language", language)
+                    intent.putExtra("accesstoken", accesstoken)
+                    intent.putExtra("refreshtoken", refreshtoken)
                     startActivity(intent)
                     finish()
                 }

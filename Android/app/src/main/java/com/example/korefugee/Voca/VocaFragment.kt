@@ -63,8 +63,6 @@ class VocaFragment : Fragment() {
             }
         })
 
-
-
         vocabinding.dayBack.setOnClickListener {
             // 날짜 변경 api
             // 날짜 뒤로 가기

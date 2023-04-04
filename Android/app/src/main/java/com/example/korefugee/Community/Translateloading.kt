@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.util.Patterns
 import android.view.View
@@ -23,6 +24,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class Translateloading : AppCompatActivity() {
@@ -38,7 +41,6 @@ class Translateloading : AppCompatActivity() {
 
     lateinit var accesstoken: String
     lateinit var refreshtoken: String
-    private lateinit var file: File
 
     lateinit var requestFile : RequestBody
 
@@ -57,15 +59,18 @@ class Translateloading : AppCompatActivity() {
             refreshtoken = intent.getStringExtra("refreshtoken").toString()
         }
         Log.e("aaaaa",language_short)
-        file = File(path)
+        Log.e("aaaaa",path)
+
+
         if(way == "camera"){
-            requestFile = RequestBody.create(MediaType.parse("image/*"), file)
+            requestFile = RequestBody.create(MediaType.parse("image/*"), path)
         }
         else if(way =="pdf"){
-            requestFile = RequestBody.create(MediaType.parse("applcation/pdf"), file)
+            requestFile = RequestBody.create(MediaType.parse("applcation/pdf"), path)
         }
 
-        val body = MultipartBody.Part.createFormData("file", file.name, requestFile)
+        val body = MultipartBody.Part.createFormData("file", "ㅁㅁ", requestFile)
+
 
         val loading: ImageView =
             findViewById<View>(com.example.korefugee.R.id.gif_loading) as ImageView
@@ -73,7 +78,6 @@ class Translateloading : AppCompatActivity() {
         Glide.with(this).load<Any>(com.example.korefugee.R.drawable.loading)
             .into<GlideDrawableImageViewTarget>(gifImage)
 
-        /*
         api.post_translate("Bearer $accesstoken", language_short,body).enqueue(
             object : Callback<TRANS_R_Model> {
                 // 응답하면
@@ -89,8 +93,51 @@ class Translateloading : AppCompatActivity() {
 
                     if (responsedata != null) {
                         testpath = responsedata.imgPath
+                        Log.d("aa",testpath)
                         // api 연결
+                        api.get_translate("http://34.64.122.97:8000/translate/${testpath}/${language_short}")
+                            .enqueue(object : Callback<JsonPrimitive> {
+                                // 응답하면
+                                override fun onResponse(
+                                    call: Call<JsonPrimitive>, response: Response<JsonPrimitive>
+                                ) {
 
+                                    Log.d("응답a", response.toString())
+                                    Log.d("응답aaaaaa!!", response.body().toString())
+                                    resultpath = Uri.parse(response.body().toString()).toString()
+                                    resultpath = resultpath.replace(("\""), "")
+                                    check_img_result.visibility = View.VISIBLE
+                                    check_text_result.visibility = View.VISIBLE
+                                    downloadButton.visibility = View.VISIBLE
+                                    gif_loading.visibility = View.GONE
+                                    gif_loading_text.visibility = View.GONE
+                                    downloadButton.setOnClickListener {
+                                        try {
+                                            if (!URLUtil.isValidUrl(resultpath)) {
+                                                Toast.makeText(
+                                                    this@Translateloading,
+                                                    " This is not a valid link", Toast.LENGTH_LONG)
+                                                    .show()
+                                            } else {
+                                                val intent = Intent(Intent.ACTION_VIEW)
+                                                intent.data = Uri.parse(resultpath)
+                                                startActivity(intent)
+                                            }
+                                        } catch (e: ActivityNotFoundException) {
+                                            Toast.makeText(
+                                                this@Translateloading,
+                                                " You don't have any browser to open web page",
+                                                Toast.LENGTH_LONG
+                                            ).show()
+                                        }
+                                    }
+                                }
+
+                                override fun onFailure(call: Call<JsonPrimitive>, t: Throwable) {
+                                    // 실패 시
+                                    Log.d("응답", t.message.toString())
+                                }
+                            })
                     }
 
                 }
@@ -101,56 +148,10 @@ class Translateloading : AppCompatActivity() {
                 }
             })
 
-         */
-        testpath = "https://storage.googleapis.com/korefugee_trans/original/73445848-d9c4-4f1a-8401-e63e6989c0f2.pdf"
-        api.get_translate("http://34.64.122.97:8000/translate/${testpath}/${language_short}")
-            .enqueue(object : Callback<JsonPrimitive> {
-                // 응답하면
-                override fun onResponse(
-                    call: Call<JsonPrimitive>, response: Response<JsonPrimitive>
-                ) {
-
-                    Log.d("응답a", response.toString())
-                    Log.d("응답aaaaaa!!", response.body().toString())
-                    resultpath = Uri.parse(response.body().toString()).toString()
-                    resultpath = resultpath.replace(("\""), "")
-                    check_img_result.visibility = View.VISIBLE
-                    check_text_result.visibility = View.VISIBLE
-                    downloadButton.visibility = View.VISIBLE
-                    gif_loading.visibility = View.GONE
-                    gif_loading_text.visibility = View.GONE
-                    downloadButton.setOnClickListener {
-                        try {
-                            if (!URLUtil.isValidUrl(resultpath)) {
-                                Toast.makeText(
-                                    this@Translateloading,
-                                    " This is not a valid link", Toast.LENGTH_LONG)
-                                    .show()
-                            } else {
-                                val intent = Intent(Intent.ACTION_VIEW)
-                                intent.data = Uri.parse(resultpath)
-                                startActivity(intent)
-                            }
-                        } catch (e: ActivityNotFoundException) {
-                            Toast.makeText(
-                                this@Translateloading,
-                                " You don't have any browser to open web page",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-                    }
-                }
-
-                override fun onFailure(call: Call<JsonPrimitive>, t: Throwable) {
-                    // 실패 시
-                    Log.d("응답", t.message.toString())
-                }
-            })
 
 
 
 
     }
-
 
 }

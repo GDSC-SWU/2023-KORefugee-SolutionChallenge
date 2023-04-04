@@ -22,7 +22,7 @@ class SplashActivity : AppCompatActivity() {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
-        },9000)
+        },8000)
 
         val loading: ImageView = findViewById<View>(R.id.uploadprofileImageView) as ImageView
         val gifImage = GlideDrawableImageViewTarget(loading)

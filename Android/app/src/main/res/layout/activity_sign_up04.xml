@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Login.Finish_Activity">
+    tools:context=".Login.SignUp04Activity">
 
     <ImageView
         android:id="@+id/imageView5"
         android:layout_width="230dp"
         android:layout_height="80dp"
         android:layout_marginLeft="43dp"
-        android:layout_marginTop="137dp"
+        android:layout_marginTop="100dp"
         android:background="@drawable/finish"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -32,7 +32,7 @@
         android:id="@+id/end"
         android:layout_width="320dp"
         android:layout_height="70dp"
-        android:layout_marginTop="260dp"
+        android:layout_marginTop="300dp"
         android:background="@drawable/roundedge_8_orange"
         android:text="Start"
         android:textSize="40dp"
@@ -42,5 +42,11 @@
         app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
 
-
+    <ImageView
+        android:layout_width="238.88dp"
+        android:layout_height="228dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/egg"
+        app:layout_constraintBottom_toTopOf="@+id/end"
+        app:layout_constraintEnd_toEndOf="@+id/end" />
 </androidx.constraintlayout.widget.ConstraintLayout>

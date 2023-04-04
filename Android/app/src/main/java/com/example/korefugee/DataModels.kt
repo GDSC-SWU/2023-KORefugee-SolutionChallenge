@@ -49,7 +49,12 @@ data class SignUp_R_Model(
     var success:String? = null,
     var error:String? = null
 )
-
+data class MyWord_Save_Model(
+    var wordId:Int
+)
+data class sign_up_email(
+    var email:String
+)
 data class MY_R_Model(
     val data: Data,
     val error: String,
@@ -89,7 +94,8 @@ data class WordList_R_Model(
     data class Data(
         val wordId: Int,
         val words: String,
-        val wordP:String
+        val wordP:String,
+        var check: Boolean
     )
 }
 
@@ -109,3 +115,35 @@ data class Place(
     val address: LatLng,
     val rating: Float
 )
+
+data class Word_Saved_list_R_Model(
+    val `data`: List<Data>,
+    val error: String,
+    val success: String
+) {
+    data class Data(
+        val wordId: Int,
+        val words: String
+    )
+}
+
+
+data class Word_Saved_check_R_Model(
+    val `data`: Data,
+    val error: String,
+    val success: String
+) {
+    data class Data(
+        val email: String,
+        val mWordId: Int,
+        val studyDate: Int,
+        val wordId: Int,
+        val words: String
+    )
+}
+
+data class Word_Deleted_R_Model(
+    val error: String,
+    val success: String
+)
+

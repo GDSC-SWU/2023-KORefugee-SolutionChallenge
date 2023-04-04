@@ -87,12 +87,6 @@ class LoginActivity : AppCompatActivity() {
             val data = LoginModel(binding.emailEditText.text.toString(),
                 binding.passwordEditText.text.toString())
             val intent = Intent(this,MainActivity::class.java)
-            // !!!!!!!!!!!!!!!!!내일 지우기!!!!!!!!!!!!!!!!!!!!!!!!
-            intent.putExtra("accesstoken","accesstoken")
-            intent.putExtra("refreshtoken","refreshtoken")
-            intent.putExtra("name","name")
-            intent.putExtra("language","language")
-            // startActivity(intent)
 
 
             // 데이터 구조에 맞춰서 회원가입 데이터 받아와서 넣기

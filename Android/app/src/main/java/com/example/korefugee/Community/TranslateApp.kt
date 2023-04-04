@@ -1,9 +1,11 @@
 package com.example.korefugee.Community
 
 import android.Manifest
+import android.content.ContentUris
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
+import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -16,11 +18,9 @@ import android.widget.PopupMenu
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import com.example.korefugee.R
 import com.example.korefugee.databinding.ActivityTranslateApp2Binding
 import org.json.JSONArray
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -73,7 +73,6 @@ class TranslateApp : AppCompatActivity() {
 
                         if(name == x){
                             language_short = language
-
                         }
                     }
                     false
@@ -84,46 +83,41 @@ class TranslateApp : AppCompatActivity() {
 
 
 
-        val request =
+        val request_image =
+            registerForActivityResult(ActivityResultContracts
+                .StartActivityForResult())
+            {
+                filePath = getRealPathFromURI(it.data!!.data!!).toString()
+
+
+            }
+
+        val request_pdf =
             registerForActivityResult(ActivityResultContracts
                 .StartActivityForResult())
             {
                 it.data?.data?.let { uri->
-                    contentResolver.takePersistableUriPermission(uri,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    getRealPathFromURI(uri)?.let { it1 -> filePath = it1 }
+                    contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    filePath = getPath(this, uri).toString()
+                    Log.d("aa",filePath)
+
                 }
             }
 
         if(way == "camera"){
             // 카메라 앱 실행 및 api로 넘기기
-           val storageDir: File? =
-                getExternalFilesDir(Environment.DIRECTORY_PICTURES) // 외장 메모리 공간에 저장하겠다
-            val file = File.createTempFile(
-                "JPEG_${timeStamp}_", // 이름
-                ".jpg", // 형식
-                storageDir // 저장될 공간
-            )
-
-            filePath = file.absolutePath // 절대 경로로
-
-            val photoURI: Uri = FileProvider.getUriForFile(
-                this,
-                "com.example.korefugee.fileprovider", file
-            )
-
             checkPermission()
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.setType("image/*")
+            request_image.launch(intent)
 
-            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE) // 카메라 앱 구동
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI) // 우리 파일에 write 해줌 - 파일 정보 넘기기
-            request.launch(intent)
         }
         else if(way == "pdf") {
             checkPermission()
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-            intent.type = "application/pdf"
-            request.launch(intent)
-
+            intent.addCategory(Intent.CATEGORY_OPENABLE)
+            intent.setType("application/pdf")
+            request_pdf.launch(intent)
         }
 
         binding.startButton.setOnClickListener {
@@ -152,61 +146,132 @@ class TranslateApp : AppCompatActivity() {
         if(denied > 0 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(permission.values.toTypedArray(), REQUEST_PERMISSIONS)
         }
+
+
     }
 
-    private fun calculateInSampleSize(fileUri: Uri, reqWidth: Int, reqHeight: Int): Int {
-        val options = BitmapFactory.Options()
-        options.inJustDecodeBounds = true
-        try {
-            var inputStream = contentResolver.openInputStream(fileUri)
-
-            // inJustDecodeBounds 값을 true 로 설정한 상태에서 decodeXXX() 를 호출.
-            // 로딩 하고자 하는 이미지의 각종 정보가 options 에 설정 된다.
-            BitmapFactory.decodeStream(inputStream, null, options)
-            inputStream!!.close()
-            inputStream = null
-        } catch (e: Exception) {
-            e.printStackTrace()
+    private fun getRealPathFromURI(contentURI: Uri): String? {
+        val result: String?
+        val cursor: Cursor? = contentResolver.query(contentURI, null, null, null, null)
+        if (cursor == null) { // Source is Dropbox or other similar local file path
+            result = contentURI.path
+        } else {
+            cursor.moveToFirst()
+            val idx: Int = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
+            result = cursor.getString(idx)
+            cursor.close()
         }
-        //비율 계산........................
-        val (height: Int, width: Int) = options.run { outHeight to outWidth }
-        var inSampleSize = 1
-        //inSampleSize 비율 계산
-        if (height > reqHeight || width > reqWidth) {
-
-            val halfHeight: Int = height / 2
-            val halfWidth: Int = width / 2
-
-            while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
-                inSampleSize *= 2
-            }
-        }
-        return inSampleSize
+        return result
     }
-    private fun getRealPathFromURI(contentUri: Uri): String? {
-        if (contentUri.path!!.startsWith("/document")) {
-            return contentUri.path
-        }
-        val id = DocumentsContract.getDocumentId(contentUri).split(":".toRegex())
-            .dropLastWhile { it.isEmpty() }
-            .toTypedArray()[1]
-        val columns = arrayOf(MediaStore.Files.FileColumns.DATA)
-        val selection = MediaStore.Files.FileColumns._ID + " = " + id
-        val cursor = contentResolver.query(
-            MediaStore.Files.getContentUri("external"),
-            columns,
-            selection,
-            null,
-            null
-        )
-        try {
-            val columnIndex = cursor!!.getColumnIndex(columns[0])
-            if (cursor.moveToFirst()) {
-                return cursor.getString(columnIndex)
+
+    fun getPath(context: Context, uri: Uri): String? {
+        val isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+
+        // DocumentProvider
+        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+            // ExternalStorageProvider
+            if (isExternalStorageDocument(uri)) {
+                Log.e("Aaa","error1")
+                val docId = DocumentsContract.getDocumentId(uri)
+                val split = docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }
+                    .toTypedArray()
+                val type = split[0]
+                if ("primary".equals(type, ignoreCase = true)) {
+                    return Environment.getExternalStorageDirectory().toString() + "/" + split[1]
+                }
+
+                // TODO handle non-primary volumes
+            } else if (isDownloadsDocument(uri)) {
+                Log.e("Aaa","error2")
+                val id = DocumentsContract.getDocumentId(uri)
+                val contentUri = ContentUris.withAppendedId(
+                    Uri.parse("content://downloads/public_downloads"), java.lang.Long.valueOf(id)
+                )
+                return getDataColumn(context, contentUri, null, null)
+            } else if (isMediaDocument(uri)) {
+                Log.e("Aaa","error3")
+                val docId = DocumentsContract.getDocumentId(uri)
+                val split = docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }
+                    .toTypedArray()
+                val type = split[0]
+                var contentUri: Uri? = null
+                if ("image" == type) {
+                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                } else if ("video" == type) {
+                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                } else if ("audio" == type) {
+                    contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+                }
+                val selection = "_id=?"
+                val selectionArgs = arrayOf(
+                    split[1]
+                )
+                return getDataColumn(context, contentUri, selection, selectionArgs)
             }
-        } finally {
-            cursor!!.close()
+        } else if ("content".equals(uri.scheme, ignoreCase = true)) {
+            return getDataColumn(context, uri, null, null)
+        } else if ("file".equals(uri.scheme, ignoreCase = true)) {
+            return uri.path
         }
         return null
+    }
+
+    /**
+     * Get the value of the data column for this Uri. This is useful for
+     * MediaStore Uris, and other file-based ContentProviders.
+     *
+     * @param context The context.
+     * @param uri The Uri to query.
+     * @param selection (Optional) Filter used in the query.
+     * @param selectionArgs (Optional) Selection arguments used in the query.
+     * @return The value of the _data column, which is typically a file path.
+     */
+    fun getDataColumn(
+        context: Context, uri: Uri?, selection: String?,
+        selectionArgs: Array<String>?
+    ): String? {
+        var cursor: Cursor? = null
+        val column = "_data"
+        val projection = arrayOf(
+            column
+        )
+        try {
+            cursor = context.getContentResolver().query(
+                uri!!, projection, selection, selectionArgs,
+                null
+            )
+            if (cursor != null && cursor.moveToFirst()) {
+                val column_index = cursor.getColumnIndexOrThrow(column)
+                return cursor.getString(column_index)
+            }
+        } finally {
+            cursor?.close()
+        }
+        return null
+    }
+
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is ExternalStorageProvider.
+     */
+    fun isExternalStorageDocument(uri: Uri): Boolean {
+        return "com.android.externalstorage.documents" == uri.authority
+    }
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is DownloadsProvider.
+     */
+    fun isDownloadsDocument(uri: Uri): Boolean {
+        return "com.android.providers.downloads.documents" == uri.authority
+    }
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is MediaProvider.
+     */
+    fun isMediaDocument(uri: Uri): Boolean {
+        return "com.android.providers.media.documents" == uri.authority
     }
 }

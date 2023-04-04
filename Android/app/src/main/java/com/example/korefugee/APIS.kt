@@ -38,6 +38,14 @@ interface APIS {
         @Body jsonparams: SignUpModel
     ): Call<SignUp_R_Model>
 
+    // 이메일 체크크 ap
+    @POST("/api/emailCheck")
+    @Headers("accept: application/json",
+        "content-type: application/json")
+    fun post_register_email(
+        @Body jsonparams: sign_up_email
+    ): Call<Word_Deleted_R_Model>
+
     @Multipart
     @POST("/api/image")
     @Headers("accept: application/json",
@@ -66,6 +74,30 @@ interface APIS {
     fun get_my(
         @Header("Authorization") Authorization: String?
         ): Call<MY_R_Model>
+
+    @GET("/api/myWord")
+    @Headers("accept: application/json",
+        "content-type: application/json")
+    fun get_myword(
+        @Header("Authorization") Authorization: String?
+    ): Call<Word_Saved_list_R_Model>
+
+    @POST("/api/myWord")
+    @Headers("accept: application/json",
+        "content-type: application/json")
+    fun post_myword(
+        @Header("Authorization") Authorization: String?,
+        @Body jsonparams: MyWord_Save_Model
+    ): Call<Word_Saved_check_R_Model>
+
+    @DELETE("/api/myWord")
+    @Headers("accept: application/json",
+        "content-type: application/json")
+    fun delete_myword(
+        @Header("Authorization") Authorization: String?,
+        @Query ("wordId") wordId: Int
+    ): Call<Word_Deleted_R_Model>
+
 
     @GET("api/mDate")
     @Headers("accept: application/json",
