@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum wordType {
+  Daily
+  Medical
+  Law
+}
+
+enum wordLevel {
+  Advanced
+  Biginner
+}
+
+model Users {
+  userId           Int       @id @default(autoincrement())
+  email            String    @unique @db.VarChar(100)
+  password         String    @db.VarChar(200)
+  name             String    @db.VarChar(50)
+  birth            String    @db.VarChar(50)
+  gender           String    @db.VarChar(50)
+  status           String?   @db.VarChar(50)
+  nation           String?   @db.VarChar(50)
+  language         String?   @db.VarChar(50)
+}
+
+model Words {
+  wordId    Int        @id @default(autoincrement())
+  words     String     @db.VarChar(200)
+  wordP     String     @db.VarChar(200)
+  wordType  wordType?
+  wordLevel wordLevel?
+  wordDate  Int?
+}
+
+model MyWords {
+  mWordId   Int     @id @default(autoincrement())
+  email     String? @db.VarChar(50)
+  wordId    Int?
+  words     String? @db.VarChar(50)
+  studyDate Int?    @default(1)
+}
+
+model Map {
+  placeId    Int        @id @default(autoincrement())
+  place      String     @db.VarChar(200)
+  pNum       String     @db.VarChar(20)
+  pSite      String     @db.VarChar(200)
+}
+
+model MyMap {
+  mPlaceId    Int         @id @default(autoincrement())
+  email       String     @db.VarChar(50)
+  placeId     Int?
+  place       String      @db.VarChar(200)
+  pNum        String      @db.VarChar(20)
+  pSite       String      @db.VarChar(200)
+}
+
+model Image {
+  imgId       Int         @id @default(autoincrement())
+  email       String?     @db.VarChar(200)
+  transLan    String?     @db.VarChar(20)
+  imgPath     String?     @db.VarChar(500)
+  transPath   String?     @db.VarChar(500) 
+  fileExtension String?   @db.VarChar(100)
+}
