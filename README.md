@@ -21,8 +21,8 @@ https://youtu.be/EZfoQdhTCAw
 ![image](https://user-images.githubusercontent.com/117229525/229264280-2980ad14-c7e5-4a3a-9f95-c8686e16e8e4.png)
 
 # 🐣How to Use
+![image](https://user-images.githubusercontent.com/97941141/230757673-5b4847e2-700d-4e59-be15-49a011f52258.png)
 ![image](https://user-images.githubusercontent.com/97941141/230757653-325bdd9c-b46b-47b4-9e1a-b88f5eb3ac9c.png)
-![image](https://user-images.githubusercontent.com/117229525/229968444-d1c98ee3-706b-4fee-a409-c29d718cf905.png)
 ![image](https://user-images.githubusercontent.com/117229525/229968470-a506c97e-1acf-4480-94a4-ed5e43e17fb9.png)
 ![image](https://user-images.githubusercontent.com/117229525/229968483-6094a48f-7281-475b-b36b-f719d35984d8.png)
 ![image](https://user-images.githubusercontent.com/117229525/229968492-7ea5bc36-50d1-405a-b4e7-1bb3c650cafb.png)
