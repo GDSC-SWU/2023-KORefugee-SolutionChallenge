@@ -21,12 +21,12 @@ https://youtu.be/EZfoQdhTCAw
 ![image](https://user-images.githubusercontent.com/117229525/229264280-2980ad14-c7e5-4a3a-9f95-c8686e16e8e4.png)
 
 # 🐣How to Use
-![page11](https://user-images.githubusercontent.com/97941141/229927648-b6399d7a-6fc9-442c-a358-b339c1711731.png)
+![image](https://user-images.githubusercontent.com/97941141/230757653-325bdd9c-b46b-47b4-9e1a-b88f5eb3ac9c.png)
 ![image](https://user-images.githubusercontent.com/117229525/229968444-d1c98ee3-706b-4fee-a409-c29d718cf905.png)
 ![image](https://user-images.githubusercontent.com/117229525/229968470-a506c97e-1acf-4480-94a4-ed5e43e17fb9.png)
 ![image](https://user-images.githubusercontent.com/117229525/229968483-6094a48f-7281-475b-b36b-f719d35984d8.png)
 ![image](https://user-images.githubusercontent.com/117229525/229968492-7ea5bc36-50d1-405a-b4e7-1bb3c650cafb.png)
-![image](https://user-images.githubusercontent.com/117229525/229968499-884bcb57-53fa-419b-8d81-10955ca47ecc.png)
+![image](https://user-images.githubusercontent.com/97941141/230757647-eb661352-27c5-477b-8c54-334be2f4d5f5.png)
 ![image](https://user-images.githubusercontent.com/117229525/229968506-3cb175d7-df16-46d9-b94a-cc5c861d883a.png)
 ![image](https://user-images.githubusercontent.com/117229525/229968517-350daed3-a88a-424e-ab4a-caaa0054b17b.png)
 
