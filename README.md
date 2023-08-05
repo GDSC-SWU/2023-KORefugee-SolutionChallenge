@@ -34,8 +34,8 @@ https://youtu.be/EZfoQdhTCAw
 # 🐣Team Members
 🥚 BackEnd Developer_ HyoJeong Choi
 
-🐤UI/UX Designer_ Jihye Lee
+🐤 UI/UX Designer_ Jihye Lee
 
-🐥AI/ML Developer_ Seohyun Lee
+🐥 AI/ML Developer_ Seohyun Lee
 
-🐓Product Manager, FrontEnd Developer_ Yerim Lee
+🐓 Product Manager, FrontEnd Developer_ Yerim Lee
