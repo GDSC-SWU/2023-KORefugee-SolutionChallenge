@@ -38,4 +38,4 @@ https://youtu.be/EZfoQdhTCAw
 
 🐥AI/ML Developer_ Seohyun Lee
 
-🐓FrontEnd Developer_ Yerim Lee
+🐓Product Manager, FrontEnd Developer_ Yerim Lee
